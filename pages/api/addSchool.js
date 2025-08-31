@@ -2,6 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { getPool } from "@/lib/db";
+import cloudinary from "@/lib/cloudinary";
 
 export const config = {
   api: { bodyParser: false },
