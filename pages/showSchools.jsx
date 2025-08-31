@@ -1,51 +1,44 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ShowSchools() {
   const [schools, setSchools] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/getSchools")
       .then((res) => res.json())
-      .then((data) => {
-        setSchools(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      .then((data) => setSchools(data));
   }, []);
 
-  if (loading) return <p className="p-4">Loading schools...</p>;
-
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Schools</h1>
+    <div className="max-w-7xl mx-auto p-6">
+      <h1 className="text-3xl font-bold text-blue-700 mb-8">Schools</h1>
 
       {schools.length === 0 ? (
-        <p>No schools found. Try adding one.</p>
+        <p className="text-gray-600">No schools found. Try adding one.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {schools.map((school) => (
-            <div
-              key={school.id}
-              className="border rounded-lg overflow-hidden shadow hover:shadow-md transition"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {schools.map((school, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              {school.image ? (
-                <img
-                  src={`/schoolImages/${school.image}`}
-                  alt={school.name}
-                  className="w-full h-40 object-cover"
-                />
-              ) : (
-                <div className="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
-                  No Image
-                </div>
-              )}
+              <img
+                src={`/schoolImages/${school.image}`}
+                alt={school.name}
+                className="w-full h-48 object-cover"
+              />
               <div className="p-4">
-                <h2 className="font-semibold text-lg">{school.name}</h2>
-                <p className="text-sm text-gray-600">{school.address}</p>
-                <p className="text-sm text-gray-600">{school.city}</p>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {school.name}
+                </h2>
+                <p className="text-gray-600">{school.address}</p>
+                <p className="text-gray-500 text-sm">{school.city}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
