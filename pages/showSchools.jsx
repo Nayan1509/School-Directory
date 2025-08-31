@@ -20,14 +20,14 @@ export default function ShowSchools() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {schools.map((school, i) => (
             <motion.div
-              key={i}
+              key={school.id || i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
               <img
-                src={`/schoolImages/${school.image}`}
+                src={school.image}
                 alt={school.name}
                 className="w-full h-48 object-cover"
               />
@@ -36,7 +36,12 @@ export default function ShowSchools() {
                   {school.name}
                 </h2>
                 <p className="text-gray-600">{school.address}</p>
-                <p className="text-gray-500 text-sm">{school.city}</p>
+                <p className="text-gray-500 text-sm">
+                  {school.city}, {school.state}
+                </p>
+                <p className="text-sm text-blue-600 mt-2">
+                  📞 {school.contact} | ✉️ {school.email_id}
+                </p>
               </div>
             </motion.div>
           ))}
