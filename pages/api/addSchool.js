@@ -1,6 +1,4 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { getPool } from "@/lib/db";
 import cloudinary from "@/lib/cloudinary";
 
@@ -8,21 +6,10 @@ export const config = {
   api: { bodyParser: false },
 };
 
-const uploadDir = path.join(process.cwd(), "public", "schoolImages");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: uploadDir,
-  filename: (_, file, cb) => {
-    const unique = Date.now() + "-" + file.originalname.replace(/\s+/g, "_");
-    cb(null, unique);
-  },
-});
+// ✅ no disk writes, just memory
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// multer middleware
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
@@ -33,15 +20,15 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST")
+  if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    //file upload
     await runMiddleware(req, res, upload.single("image"));
 
     const { name, address, city, state, contact, email_id } = req.body;
-    const image = req.file?.filename;
+    const file = req.file;
 
     if (
       !name ||
@@ -50,21 +37,34 @@ export default async function handler(req, res) {
       !state ||
       !contact ||
       !email_id ||
-      !image
+      !file
     ) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // insert into DB
+    // ✅ upload file buffer to Cloudinary
+    const uploadRes = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "schools" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(file.buffer);
+    });
+
+    // ✅ insert Cloudinary URL into DB
     const pool = getPool();
     await pool.execute(
       "INSERT INTO schools (name, address, city, state, contact, email_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [name, address, city, state, contact, email_id, image]
+      [name, address, city, state, contact, email_id, uploadRes.secure_url]
     );
 
-    return res
-      .status(201)
-      .json({ message: "School added successfully", file: image });
+    return res.status(201).json({
+      message: "School added successfully",
+      file: uploadRes.secure_url,
+    });
   } catch (err) {
     console.error("API ERROR:", err);
     return res
