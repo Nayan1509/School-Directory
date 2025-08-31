@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏫 School Directory
 
-## Getting Started
+A full-stack **Next.js (Pages Router)** project where users can **add schools** and **browse them in a modern UI**.  
+The app is styled with **Tailwind CSS v3** and animations via **Framer Motion**.  
+It uses **PlanetScale (MySQL)** as the database and supports image uploads with **Cloudinary**.  
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+- Add schools with details (name, address, city, state, contact, email, image)
+- Browse schools in a **modern, responsive grid layout**
+- **Framer Motion animations** for smooth UI
+- **Responsive Navbar** with hamburger menu for mobile
+- **Vercel + PlanetScale + Cloudinary** deployment ready
+
+---
+
+## 📂 Folder Structure
+
+```
+school-directory/
+│
+├── components/
+│   └── Navbar.jsx       # Shared navigation bar
+│
+├── lib/
+│   └── db.js            # MySQL connection (PlanetScale)
+│
+├── pages/
+│   ├── _app.js          # App wrapper (imports global styles)
+│   ├── index.js         # Landing page
+│   ├── addSchool.jsx    # Form to add new schools
+│   ├── showSchools.jsx  # List of all schools
+│   └── api/
+│       ├── addSchool.js # API to insert school into DB
+│       └── getSchools.js# API to fetch schools
+│
+├── public/
+│   └── schoolImages/    # (local storage only, not used in production)
+│
+├── styles/
+│   └── globals.css      # TailwindCSS imports
+│
+├── tailwind.config.js
+├── postcss.config.js
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ⚙️ Setup (Local Development)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1️⃣ Clone repo & install dependencies
+```bash
+git clone <your-repo-url>
+cd school-directory
+npm install
+```
 
-## Learn More
+### 2️⃣ Configure Database
+- Use **PlanetScale** for production or local MySQL for development
+- Create `.env.local` file in root:
+```env
+DATABASE_URL="mysql://username:password@host/school_directory?sslaccept=strict"
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3️⃣ Run database migration
+Create table in your MySQL DB:
+```sql
+CREATE TABLE schools (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  address TEXT NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  state VARCHAR(100) NOT NULL,
+  contact VARCHAR(20) NOT NULL,
+  email_id VARCHAR(100) NOT NULL,
+  image VARCHAR(255) NOT NULL
+);
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4️⃣ Start development server
+```bash
+npm run dev
+```
+Visit 👉 `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ☁️ Cloudinary Setup (Image Storage)
+Vercel **does not support persistent local storage**.  
+To handle image uploads in production, we use **Cloudinary**.  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Steps:
+1. Create a free account at [Cloudinary](https://cloudinary.com).
+2. Go to **Dashboard** and copy your:
+   - `CLOUD_NAME`
+   - `API_KEY`
+   - `API_SECRET`
+3. Add these to `.env.local` and also in Vercel project settings.  
+4. Update your `addSchool` API to upload to Cloudinary instead of saving locally.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Example upload code:
+```js
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const result = await cloudinary.uploader.upload(filePath, {
+  folder: "schools",
+});
+// Save result.secure_url in DB
+```
+
+---
+
+## 🌐 Deployment
+
+### ✅ Frontend on Vercel
+1. Push project to GitHub.  
+2. Go to [Vercel](https://vercel.com) → **New Project** → import your repo.  
+3. Add environment variables in **Vercel Dashboard → Project Settings → Environment Variables**:  
+   - `DATABASE_URL`
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`  
+4. Deploy → Vercel auto-builds Next.js.
+
+### ✅ Database on PlanetScale
+1. Sign up at [PlanetScale](https://planetscale.com).  
+2. Create a new database → name: `school_directory`.  
+3. Create a password in **Settings → Passwords → New Password**.  
+4. Copy the connection string and add it to `.env.local` and Vercel.  
+5. Run the SQL migration (see Setup step 3).  
+
+### ✅ Image Storage with Cloudinary
+1. Already configured locally.  
+2. Make sure Cloudinary env vars are added in Vercel.  
+3. Your uploaded images will now persist across deployments.
+
+---
+
+## 🛠️ Tech Stack
+- **Next.js (Pages Router)**
+- **TailwindCSS v3**
+- **Framer Motion** (animations)
+- **PlanetScale (MySQL)**
+- **Cloudinary** (image storage)
+- **Vercel** (frontend hosting)
+
+---
+
+## 📜 License
+MIT License – free to use, modify, and distribute.
+
+---
+
+💡 Made with ❤️ using **Next.js + Tailwind + PlanetScale + Cloudinary**

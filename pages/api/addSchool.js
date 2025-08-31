@@ -4,16 +4,14 @@ import fs from "fs";
 import { getPool } from "@/lib/db";
 
 export const config = {
-  api: { bodyParser: false }, // important: disable Next.js body parsing
+  api: { bodyParser: false },
 };
 
-// ensure upload folder exists
 const uploadDir = path.join(process.cwd(), "public", "schoolImages");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// multer storage config
 const storage = multer.diskStorage({
   destination: uploadDir,
   filename: (_, file, cb) => {
@@ -23,7 +21,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// helper to run multer as middleware
+// multer middleware
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
@@ -38,7 +36,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    // process file upload
+    //file upload
     await runMiddleware(req, res, upload.single("image"));
 
     const { name, address, city, state, contact, email_id } = req.body;
