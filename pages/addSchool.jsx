@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 export default function AddSchool() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function AddSchool() {
     image: null,
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -21,13 +23,36 @@ export default function AddSchool() {
       ...prev,
       [name]: files ? files[0] : value,
     }));
+
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validate = () => {
+    let tempErrors = {};
+
+    if (!formData.email_id) {
+      tempErrors.email_id = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email_id)) {
+      tempErrors.email_id = "Enter a valid email address";
+    }
+
+    if (!formData.contact) {
+      tempErrors.contact = "Contact number is required";
+    } else if (!/^[0-9]{10,15}$/.test(formData.contact)) {
+      tempErrors.contact = "Enter a valid contact number (10-15 digits)";
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setMessage(null);
 
+    if (!validate()) return;
+
+    setLoading(true);
     try {
       const body = new FormData();
       Object.entries(formData).forEach(([key, value]) =>
@@ -40,10 +65,11 @@ export default function AddSchool() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-      setMessage({ type: "success", text: data.message });
+      // toaster for success message
+      toast.success(data.message || "School added successfully!");
+
       setFormData({
         name: "",
         address: "",
@@ -81,7 +107,7 @@ export default function AddSchool() {
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 "
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="text"
@@ -110,24 +136,43 @@ export default function AddSchool() {
           required
           className="w-full border rounded-lg p-3"
         />
-        <input
-          type="text"
-          name="contact"
-          placeholder="Contact Number"
-          value={formData.contact}
-          onChange={handleChange}
-          required
-          className="w-full border rounded-lg p-3"
-        />
-        <input
-          type="email"
-          name="email_id"
-          placeholder="Email ID"
-          value={formData.email_id}
-          onChange={handleChange}
-          required
-          className="w-full border rounded-lg p-3"
-        />
+
+        {/* Contact Number */}
+        <div>
+          <input
+            type="number"
+            name="contact"
+            placeholder="Contact Number"
+            value={formData.contact}
+            onChange={handleChange}
+            required
+            className={`w-full border rounded-lg p-3 ${
+              errors.contact ? "border-red-500" : ""
+            }`}
+          />
+          {errors.contact && (
+            <p className="text-red-600 text-sm mt-1">{errors.contact}</p>
+          )}
+        </div>
+
+        {/* Email */}
+        <div>
+          <input
+            type="text"
+            name="email_id"
+            placeholder="Email ID"
+            value={formData.email_id}
+            onChange={handleChange}
+            required
+            className={`w-full border rounded-lg p-3 ${
+              errors.email_id ? "border-red-500" : ""
+            }`}
+          />
+          {errors.email_id && (
+            <p className="text-red-600 text-sm mt-1">{errors.email_id}</p>
+          )}
+        </div>
+
         <input
           type="file"
           name="image"
@@ -146,15 +191,9 @@ export default function AddSchool() {
           {loading ? "Saving..." : "Add School"}
         </button>
 
-        {/* Message */}
-        {message && (
-          <p
-            className={`text-center font-medium ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {message.text}
-          </p>
+        {/* Global error (server-side only) */}
+        {message?.type === "error" && (
+          <p className="text-center font-medium text-red-600">{message.text}</p>
         )}
       </motion.form>
     </div>
