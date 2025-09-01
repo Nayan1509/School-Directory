@@ -81,7 +81,7 @@ export default function AddSchool() {
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3 "
         />
         <input
           type="text"
@@ -90,7 +90,7 @@ export default function AddSchool() {
           value={formData.address}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="text"
@@ -99,7 +99,7 @@ export default function AddSchool() {
           value={formData.city}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="text"
@@ -108,7 +108,7 @@ export default function AddSchool() {
           value={formData.state}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="text"
@@ -117,7 +117,7 @@ export default function AddSchool() {
           value={formData.contact}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="email"
@@ -126,7 +126,7 @@ export default function AddSchool() {
           value={formData.email_id}
           onChange={handleChange}
           required
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          className="w-full border rounded-lg p-3"
         />
         <input
           type="file"
