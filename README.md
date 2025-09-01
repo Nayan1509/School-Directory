@@ -133,8 +133,8 @@ const result = await cloudinary.uploader.upload(filePath, {
    - `CLOUDINARY_API_SECRET`  
 4. Deploy → Vercel auto-builds Next.js.
 
-### ✅ Database on PlanetScale
-1. Sign up at [PlanetScale](https://planetscale.com).  
+### ✅ Database on Railway
+1. Sign up at Railway.  
 2. Create a new database → name: `school_directory`.  
 3. Create a password in **Settings → Passwords → New Password**.  
 4. Copy the connection string and add it to `.env.local` and Vercel.  
@@ -151,7 +151,7 @@ const result = await cloudinary.uploader.upload(filePath, {
 - **Next.js (Pages Router)**
 - **TailwindCSS v3**
 - **Framer Motion** (animations)
-- **PlanetScale (MySQL)**
+- **Railway (MySQL)**
 - **Cloudinary** (image storage)
 - **Vercel** (frontend hosting)
 

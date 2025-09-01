@@ -10,7 +10,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-blue-600">
-          🏫 School Directory
+          School Directory
         </Link>
 
         {/* Desktop Links */}

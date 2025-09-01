@@ -10,7 +10,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         className="text-5xl font-extrabold text-blue-700 mb-4"
       >
-        School Directory 🏫
+        School Directory
       </motion.h1>
 
       <motion.p
@@ -32,14 +32,14 @@ export default function Home() {
           href="/addSchool"
           className="px-6 py-3 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transition transform hover:scale-105"
         >
-          ➕ Add School
+          Add School
         </Link>
 
         <Link
           href="/showSchools"
           className="px-6 py-3 bg-green-500 text-white rounded-xl shadow-lg hover:bg-green-600 transition transform hover:scale-105"
         >
-          📖 View Schools
+          View Schools
         </Link>
       </motion.div>
     </div>

@@ -6,7 +6,6 @@ export const config = {
   api: { bodyParser: false },
 };
 
-// ✅ no disk writes, just memory
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -42,7 +41,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // ✅ upload file buffer to Cloudinary
+    // upload to Cloudinary
     const uploadRes = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: "schools" },
@@ -54,7 +53,7 @@ export default async function handler(req, res) {
       stream.end(file.buffer);
     });
 
-    // ✅ insert Cloudinary URL into DB
+    //insert Cloudinary URL into DB
     const pool = getPool();
     await pool.execute(
       "INSERT INTO schools (name, address, city, state, contact, email_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
