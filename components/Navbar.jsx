@@ -16,6 +16,12 @@ export default function Navbar() {
         {/* Desktop Links */}
         <div className="hidden md:flex gap-6">
           <Link
+            href="/dashboard"
+            className="text-gray-700 hover:text-blue-600 font-medium transition"
+          >
+            Admin Dashboard
+          </Link>
+          <Link
             href="/addSchool"
             className="text-gray-700 hover:text-blue-600 font-medium transition"
           >
@@ -49,6 +55,13 @@ export default function Navbar() {
             className="md:hidden bg-white shadow-inner"
           >
             <div className="flex flex-col items-center gap-4 py-4">
+              <Link
+                href="/dashboard"
+                className="text-gray-700 hover:text-blue-600 font-medium transition"
+                onClick={() => setMenuOpen(false)}
+              >
+                Admin Dashboard
+              </Link>
               <Link
                 href="/addSchool"
                 className="text-gray-700 hover:text-blue-600 font-medium transition"

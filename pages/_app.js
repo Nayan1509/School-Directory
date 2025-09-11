@@ -6,7 +6,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      <main className="pt-4">
+      <main className="pt-0">
         <Component {...pageProps} />
         <Toaster
           position="top-center"

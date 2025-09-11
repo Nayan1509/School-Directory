@@ -41,7 +41,7 @@ export default function Login() {
     const data = await res.json();
     if (!res.ok) return toast.error(data.error || "OTP invalid");
     toast.success("Logged in");
-    router.push("/addSchool");
+    router.push("/dashboard");
   };
 
   return (

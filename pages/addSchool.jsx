@@ -61,19 +61,19 @@ export default  function  AddSchool () {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/logout", { method: "POST" });
-      if (res.ok) {
-        toast.success("Logged out successfully");
-        router.replace("/login"); // redirect to login page
-      } else {
-        toast.error("Logout failed");
-      }
-    } catch (err) {
-      toast.error("Something went wrong");
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     const res = await fetch("/api/logout", { method: "POST" });
+  //     if (res.ok) {
+  //       toast.success("Logged out successfully");
+  //       router.replace("/login"); // redirect to login page
+  //     } else {
+  //       toast.error("Logout failed");
+  //     }
+  //   } catch (err) {
+  //     toast.error("Something went wrong");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,13 +128,13 @@ export default  function  AddSchool () {
           <h1 className="text-3xl font-bold text-blue-700">
             ➕ Add New School
           </h1>
-          <button
+          {/* <button
             type="button"
             onClick={handleLogout}
             className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
           >
             Logout
-          </button>
+          </button> */}
         </div>
 
         {/* Inputs */}
