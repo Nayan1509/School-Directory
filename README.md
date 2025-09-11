@@ -1,17 +1,19 @@
 # 🏫 School Directory
 
-A full-stack **Next.js (Pages Router)** project where users can **add schools** and **browse them in a modern UI**.  
-The app is styled with **Tailwind CSS v3** and animations via **Framer Motion**.  
-It uses **PlanetScale (MySQL)** as the database and supports image uploads with **Cloudinary**.  
+A full-stack **School Directory** app built with **Next.js (Pages Router)**, **MySQL (Railway)**, **Cloudinary**, and **SendGrid** for OTP-based authentication.
 
+Users can:
+- View all schools (public).
+- Login with **Email OTP** (6-digit code, 10-min expiry).
+- Add, edit, or delete schools (authenticated users only).
+- Upload school images (stored on Cloudinary).
 ---
 
-## 🚀 Features
-- Add schools with details (name, address, city, state, contact, email, image)
-- Browse schools in a **modern, responsive grid layout**
-- **Framer Motion animations** for smooth UI
-- **Responsive Navbar** with hamburger menu for mobile
-- **Vercel + PlanetScale + Cloudinary** deployment ready
+## 🚀 Tech Stack
+- **Frontend**: Next.js (Pages Router), TailwindCSS, Framer Motion, React Hot Toast
+- **Backend**: Next.js API routes, MySQL (via Railway), Cloudinary
+- **Auth**: JWT cookies + Email OTP login (SendGrid)
+- **Deployment**: Vercel (frontend + backend APIs), Railway (MySQL), Cloudinary (images)
 
 ---
 
@@ -21,19 +23,31 @@ It uses **PlanetScale (MySQL)** as the database and supports image uploads with 
 school-directory/
 │
 ├── components/
-│   └── Navbar.jsx       # Shared navigation bar
+│   └── Navbar.jsx           # Shared navigation bar
+|   └── AddSchoolForm.jsx.       
+|   └── EditSchoolForm.jsx
 │
 ├── lib/
 │   └── db.js            # MySQL connection (PlanetScale)
+|   └── cloudinary.js    # Cloudinary connection
+|   └── auth.js          # User Authentication
 │
 ├── pages/
 │   ├── _app.js          # App wrapper (imports global styles)
 │   ├── index.js         # Landing page
 │   ├── addSchool.jsx    # Form to add new schools
 │   ├── showSchools.jsx  # List of all schools
+|   ├── login.jsx        # User authentication with OTP
+|   ├── dashboard.jsx    # Admin dashboard to manage schools
 │   └── api/
-│       ├── addSchool.js # API to insert school into DB
-│       └── getSchools.js# API to fetch schools
+│       ├── addSchool.js  # API to insert school into DB
+│       └── getSchools.js # API to fetch schools
+│       └── delete.js     #API to delete schools from database
+│       └── logout.js     #API Logout
+│       └── me.js         #API to check user login asset
+│       └── requestOtp.js #API to send OTP
+│       └── verifyOtp.js  #API to verify
+│       └── updateSchool.js  #API to update school info
 │
 ├── public/
 │   └── schoolImages/    # (local storage only, not used in production)
