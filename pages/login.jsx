@@ -82,6 +82,7 @@ export default function Login() {
             <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
               Enter the 6-digit OTP
             </h2>
+            <p className="text-sm text-center text-red-500 p-2">Check spam box for otp email.</p>
             <form onSubmit={handleVerify} className="space-y-4">
               <input
                 required

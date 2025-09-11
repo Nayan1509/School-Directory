@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AddSchoolForm from "@/components/AddSchoolForm";
 import EditSchoolForm from "@/components/EditSchoolForm";
 import { FiMenu } from "react-icons/fi";
+import { GridLoader } from "react-spinners";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -71,7 +72,19 @@ export default function Dashboard() {
     }
   };
 
-  if (checking) return <div className="p-8">Checking authentication...</div>;
+  if (checking) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <GridLoader
+          color="#3527de"
+          loading={true}
+          size={20}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -120,6 +133,7 @@ export default function Dashboard() {
           </>
         )}
       </AnimatePresence>
+
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-64 bg-blue-700 text-white p-6">
         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
@@ -136,6 +150,7 @@ export default function Dashboard() {
           Logout
         </button>
       </aside>
+
       {/* Main content */}
       <main className="flex-1 p-4 md:p-8 bg-gray-50 md:ml-0">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -151,7 +166,23 @@ export default function Dashboard() {
         </div>
 
         {loading ? (
-          <p>Loading schools...</p>
+          // Skeleton Loader (3 cards)
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse"
+              >
+                <div className="w-full h-48 bg-gray-300" />
+                <div className="p-4 space-y-3">
+                  <div className="h-5 bg-gray-300 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded w-full" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                  <div className="h-3 bg-gray-200 rounded w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : schools.length === 0 ? (
           <p>No schools found</p>
         ) : (
