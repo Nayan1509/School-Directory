@@ -1,6 +1,7 @@
 import multer from "multer";
 import { getPool } from "@/lib/db";
 import cloudinary from "@/lib/cloudinary";
+import { requireAuth } from "@/lib/auth";
 
 export const config = {
   api: { bodyParser: false },
@@ -18,7 +19,7 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -53,7 +54,7 @@ export default async function handler(req, res) {
       stream.end(file.buffer);
     });
 
-    //insert Cloudinary URL into DB
+    // insert Cloudinary URL into DB
     const pool = getPool();
     await pool.execute(
       "INSERT INTO schools (name, address, city, state, contact, email_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -66,8 +67,12 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("API ERROR:", err);
-    return res
-      .status(500)
-      .json({ error: "Server crashed", details: err.message });
+    return res.status(500).json({
+      error: "Server crashed",
+      details: err.message,
+    });
   }
 }
+
+// 🔒 protect with auth
+export default requireAuth(handler);

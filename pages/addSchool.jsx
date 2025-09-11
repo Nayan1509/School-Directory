@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
-export default function AddSchool() {
+export default  function  AddSchool () {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
