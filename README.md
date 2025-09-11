@@ -162,4 +162,4 @@ MIT License – free to use, modify, and distribute.
 
 ---
 
-💡 Made with ❤️ using **Next.js + Tailwind + PlanetScale + Cloudinary**
+💡 Made with ❤️ using **Next.js + Tailwind + Railway + Cloudinary**
