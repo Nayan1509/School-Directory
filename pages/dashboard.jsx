@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import AddSchoolForm from "@/components/AddSchoolForm";
+import EditSchoolForm from "@/components/EditSchoolForm";
 import { FiMenu } from "react-icons/fi";
 
 export default function Dashboard() {
@@ -13,6 +14,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedSchool, setSelectedSchool] = useState(null);
 
   // Authentication check
   useEffect(() => {
@@ -47,13 +50,24 @@ export default function Dashboard() {
 
   // Delete school
   const handleDelete = async (id) => {
-    if (!confirm("Delete this school?")) return;
-    const res = await fetch(`/api/deleteSchool?id=${id}`, { method: "DELETE" });
-    if (res.ok) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this school? This school's data will be erased from database."
+      )
+    )
+      return;
+
+    try {
+      const res = await fetch(`/api/deleteSchool?id=${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Delete failed");
+
+      toast.success("School deleted successfully");
       setSchools((prev) => prev.filter((s) => s.id !== id));
-      toast.success("School deleted");
-    } else {
-      toast.error("Failed to delete");
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
@@ -68,7 +82,6 @@ export default function Dashboard() {
         </button>
         <h1 className="text-xl font-bold">Dashboard</h1>
       </div>
-
       {/* Sidebar with animation */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -107,7 +120,6 @@ export default function Dashboard() {
           </>
         )}
       </AnimatePresence>
-
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-64 bg-blue-700 text-white p-6">
         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
@@ -124,7 +136,6 @@ export default function Dashboard() {
           Logout
         </button>
       </aside>
-
       {/* Main content */}
       <main className="flex-1 p-4 md:p-8 bg-gray-50 md:ml-0">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -162,10 +173,13 @@ export default function Dashboard() {
                   <p className="text-sm text-gray-600">{school.address}</p>
                   <div className="flex flex-wrap gap-2 mt-3">
                     <button
-                      onClick={() => router.push(`/editSchool?id=${school.id}`)}
+                      onClick={() => {
+                        setSelectedSchool(school);
+                        setShowEditModal(true);
+                      }}
                       className="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"
                     >
-                      View and Edit details
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(school.id)}
@@ -180,6 +194,47 @@ export default function Dashboard() {
           </div>
         )}
       </main>
+
+      {/* Edit School Modal */}
+      <AnimatePresence>
+        {showEditModal && selectedSchool && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black/50 z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowEditModal(false)}
+            />
+            <motion.div
+              className="fixed inset-0 flex items-center justify-center z-50"
+              initial={{ opacity: 0, scale: 0.9, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative overflow-y-auto">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                >
+                  ✕
+                </button>
+                <h2 className="text-xl font-bold mb-4">Edit School</h2>
+                <EditSchoolForm
+                  school={selectedSchool}
+                  onSuccess={() => {
+                    fetchSchools();
+                    setShowEditModal(false);
+                  }}
+                  onClose={() => setShowEditModal(false)}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Add School Modal */}
       <AnimatePresence>

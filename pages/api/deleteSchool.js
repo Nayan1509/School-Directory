@@ -1,20 +1,26 @@
 import { getPool } from "@/lib/db";
-import { requireAuth } from "@/lib/auth";
 
-async function handler(req, res) {
-  if (req.method !== "DELETE") return res.status(405).end();
-
-  const { id } = req.query;
-  if (!id) return res.status(400).json({ error: "Missing ID" });
+export default async function handler(req, res) {
+  if (req.method !== "DELETE") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: "School ID is required" });
+
     const pool = getPool();
-    await pool.execute("DELETE FROM schools WHERE id = ?", [id]);
-    res.json({ message: "School deleted" });
+    const [result] = await pool.execute("DELETE FROM schools WHERE id = ?", [
+      id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "School not found" });
+    }
+
+    return res.status(200).json({ message: "School deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database error" });
+    console.error("DELETE ERROR:", err);
+    return res.status(500).json({ error: "Failed to delete school" });
   }
 }
-
-export default requireAuth(handler);

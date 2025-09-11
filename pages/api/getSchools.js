@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   try {
     const pool = getPool();
     const [rows] = await pool.execute(
-      "SELECT id, name, address, city, image FROM schools ORDER BY id DESC"
+      "SELECT id, name, address, city, image, contact, email_id, state FROM schools ORDER BY id DESC"
     );
 
     return res.status(200).json(rows);
