@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 export default  function  AddSchool () {
+  const router = useRouter();
+  const [checking, setChecking] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -16,6 +19,18 @@ export default  function  AddSchool () {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.user) router.replace("/login");
+        else setChecking(false);
+      });
+  }, []);
+
+  if (checking) return <div className="p-8">Checking authentication...</div>;
+
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -44,6 +59,20 @@ export default  function  AddSchool () {
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", { method: "POST" });
+      if (res.ok) {
+        toast.success("Logged out successfully");
+        router.replace("/login"); // redirect to login page
+      } else {
+        toast.error("Logout failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -95,9 +124,18 @@ export default  function  AddSchool () {
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl space-y-6"
       >
-        <h1 className="text-3xl font-bold text-blue-700 text-center">
-          ➕ Add New School
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-blue-700">
+            ➕ Add New School
+          </h1>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+        </div>
 
         {/* Inputs */}
         <input
